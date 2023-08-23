@@ -2,22 +2,12 @@ const express = require('express')
 const mongoose = require('mongoose')
 // const morgan = require('morgan')
 const bodyParser = require('body-parser')
-
+const mongoDB = require('./db')
 const userRoute = require('./routes/userRoute')
-
-mongoose.connect('mongodb://localhost:27017/flaovorsexpress', {useNewUrlParser: true, useUnifiedTopology: true})
-const db = mongoose.connection
-
-db.on('error', (err) => {
-    console.log(err)
-})
-
-db.once('open', () => {
-    console.log('Database connection established')
-})
-
+const DisplayData = require('./routes/DisplayData')
 const app = express()
 
+mongoDB();
 // app.use(morgan('dev'))
 app.use(bodyParser.urlencoded({extended: true}))
 app.use(bodyParser.json())
@@ -42,3 +32,4 @@ app.listen(PORT, ()=> {
 })
 
 app.use('/api/user', userRoute)
+app.use('/api', DisplayData)

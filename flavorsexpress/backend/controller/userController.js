@@ -4,38 +4,43 @@ const bcrypt = require("bcrypt");
 const generateToken = require("../utils/generateToken");
 const { User } = require("../models/User");
 const { validationResult } = require('express-validator');
+const jwt = require("jsonwebtoken");
+const jwtSecret =  "MyNameIsHarshIAmToG"
 
 const signUp = async (req, res) => {
+  // Validate user input
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+  
   try {
-      const { name, email, password, location } = req.body;
-      // generate salt to hash password
-      const salt = await bcrypt.genSalt(10);
-      // now we set user password to hashed password
-      let encryptedPassword = await bcrypt.hash(password, salt);
+    const salt = await bcrypt.genSalt(10);
+    const secPassword = await bcrypt.hash(req.body.password, salt);
 
-      const user = await User.create({
-          name,
-          email,
-          password: encryptedPassword,
-          location
-      });
-      const token = generateToken(user._id);
-      res.json({
-          success: true,
-          message: "Registered successfully!",
-          data: {
-              _id: user._id,
-              email: user.email,
-              name: user.name,
-              location: user.location,
-              token: token
-          }
+    // If validation passes, create and save the user
+    const user = new User({
+      name: req.body.name,
+      location: req.body.location,
+      email: req.body.email,
+      password: secPassword
+    });
+
+    user.save()
+      .then(() => {
+        res.json({ message: 'User added successfully' });
+      })
+      .catch(() => {
+        res.json({ message: 'An error occurred while saving the user' });
       });
   } catch (error) {
-      res.json({ success: false, message: "User already exist!" });
-      console.log(error)
+    console.log(error);
+    res.json({ message: 'An error occurred' });
   }
 };
+
+module.exports = signUp;
+
 
 
 const login = async (req, res) => {
@@ -44,20 +49,26 @@ const login = async (req, res) => {
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
-  
+
   let email = req.body.email;
-  
+
   try {
     let userData = await User.findOne({ email: email }); // Pass an object as filter
     if (!userData) {
       return res.status(400).json({ errors: "Try logging with correct email" });
     }
-    
-    if (req.body.password !== userData.password) { // Fix typo "req.body.pasword"
+    const pwdCompare = await bcrypt.compare(req.body.password, userData.password)
+    if (!pwdCompare) { 
       return res.status(400).json({ errors: "Try logging with correct password" });
     }
     
-    return res.json({ success: true });
+    const data = {
+      user: {
+        id: userData.id
+      }
+    }
+    const authToken = jwt.sign(data, jwtSecret)
+    return res.json({ success: true, authToken: authToken });
   } catch (error) {
     console.log(error);
     res.json({ success: false });
