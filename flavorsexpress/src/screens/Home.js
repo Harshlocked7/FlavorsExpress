@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import Card from '../components/Card'
-import Caraousel from '../components/Caraousel'
 
 export default function Home() {
+  const [search, setSearch] =  useState('');
   const [foodCat, setFoodCat] = useState([]);
   const [foodItem, setFoodItem] = useState([]);
 
@@ -44,10 +44,9 @@ export default function Home() {
             <img src="https://source.unsplash.com/random/900x700/?pizza" className="d-block w-100" style={{ filter: "brightness(50%)" }} alt="..." />
           </div>
           <div className='carasoul-searchbar' style={{ position: 'absolute',width:'100%',top:'90%', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 10 }}>
-            <form className="d-flex">
-              <input className="form-control me-3" type="search" placeholder="Search" aria-label="Search" style={{ maxWidth: '80% !important', width: 'auto' }} /> {/* Adjust maxWidth */}
-              <button className="btn btn-outline-success text-white bg-success" type="submit">Search</button>
-            </form>
+            <div className="d-flex justify-content-center">
+              <input className="form-control me-3" type="search" placeholder="Search" aria-label="Search" value={search} onChange={(e)=> {setSearch(e.target.value)}}/> {/* Adjust maxWidth */}
+            </div>
           </div>
 
         </div>
@@ -71,7 +70,7 @@ export default function Home() {
               <hr />
               {foodItem.length !== 0
                 ? foodItem
-                  .filter((item) => item.CategoryName === data.CategoryName)
+                  .filter((item) => (item.CategoryName === data.CategoryName) && (item.name.toLowerCase().includes(search.toLocaleLowerCase())))  
                   .map((filterItems) => (
                     <div key={filterItems._id} className='m-4 col-12 col-md-6 col-lg-3'>
                       <Card className='pb-2' foodname={filterItems.name}

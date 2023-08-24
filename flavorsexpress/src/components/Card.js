@@ -4,21 +4,24 @@ export default function Card(props) {
 
     let options = props.options;
     let priceOptions = Object.keys(options)
+    const handleAddToCart = () => {
+
+    }
 
     return (
         <div>
             <div>
-                <div className="card mt-3" style={{ "width": "16.6rem", "maxHeight": "360px" }}>
+                <div className="card mt-3" style={{ "width": "16.6rem", "maxHeight": "350px" }}>
                     <img
-                        src="https://www.whiskaffair.com/wp-content/uploads/2020/06/Chicken-Tikka-2-3.jpg"
+                        src={props.imgSrc}
                         className="card-img-top"
                         alt="..."
-                        style={{ width: '330px', height: '200px' }} // Adjust the width and height as needed
+                        style={{ objectFit:'fill', height: '200px' }} // Adjust the width and height as needed
                     />
 
                     <div className="card-body">
                         <h5 className="card-title">{props.foodname}</h5>
-                        <div className='container w-100'>
+                      
                             <select className='m-2 h-100 bg-success rounded'>
                                 {Array.from(Array(6), (e, i) => {
                                     return (
@@ -32,7 +35,9 @@ export default function Card(props) {
                                })}
                             </select>
                             <div className='d-inline h-100 fs-6'>Total Price</div>
-                        </div>
+                        
+                        <hr></hr>
+                    <button className={`btn btn-success justify-center ms-2`} onClick={handleAddToCart}>Add to Cart</button>
                     </div>
                 </div>
             </div>
