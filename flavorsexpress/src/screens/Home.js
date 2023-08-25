@@ -4,7 +4,7 @@ import Footer from '../components/Footer'
 import Card from '../components/Card'
 
 export default function Home() {
-  const [search, setSearch] =  useState('');
+  const [search, setSearch] = useState('');
   const [foodCat, setFoodCat] = useState([]);
   const [foodItem, setFoodItem] = useState([]);
 
@@ -43,9 +43,9 @@ export default function Home() {
           <div className="carousel-item">
             <img src="https://source.unsplash.com/random/900x700/?pizza" className="d-block w-100" style={{ filter: "brightness(50%)" }} alt="..." />
           </div>
-          <div className='carasoul-searchbar' style={{ position: 'absolute',width:'100%',top:'90%', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 10 }}>
+          <div className='carasoul-searchbar' style={{ position: 'absolute', width: '100%', top: '90%', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 10 }}>
             <div className="d-flex justify-content-center">
-              <input className="form-control me-3" type="search" placeholder="Search" aria-label="Search" value={search} onChange={(e)=> {setSearch(e.target.value)}}/> {/* Adjust maxWidth */}
+              <input className="form-control me-3" type="search" placeholder="Search" aria-label="Search" value={search} onChange={(e) => { setSearch(e.target.value) }} /> {/* Adjust maxWidth */}
             </div>
           </div>
 
@@ -70,12 +70,12 @@ export default function Home() {
               <hr />
               {foodItem.length !== 0
                 ? foodItem
-                  .filter((item) => (item.CategoryName === data.CategoryName) && (item.name.toLowerCase().includes(search.toLocaleLowerCase())))  
+                  .filter((item) => (item.CategoryName === data.CategoryName) && (item.name.toLowerCase().includes(search.toLocaleLowerCase())))
                   .map((filterItems) => (
                     <div key={filterItems._id} className='m-4 col-12 col-md-6 col-lg-3'>
-                      <Card className='pb-2' foodname={filterItems.name}
+                      <Card className='pb-2' foodItem= {filterItems}
                         options={filterItems.options[0]}
-                        imgSrc={filterItems.img}
+                        
                       >
                       </Card>
                     </div>
