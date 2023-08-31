@@ -10,11 +10,32 @@ let dispatch = useDispatchCart();
     // let foodItem = props.foodItems;
     const [qty, setQty] = useState(1);
     const [size, setSize] = useState("");
+    const finalPrice = qty * parseInt(options[size]);
     const handleAddToCart = async () => {
-        await dispatch({type:"ADD", id:props.foodItem._id, name:props.foodItem.name, price: props.finalPrice, qty: qty, size: size})
-        console.log(data)
+        let food = []
+        for (const item in data) {
+            if (item.id === props.foodItem._id){
+            food = item;
+            break;
+            }
+        }
+        if (food !== []) {
+            if (food.size === size) {
+              await dispatch({ type: "UPDATE", id: props.foodItem._id, price: qty * parseInt(options[size]), qty: qty })
+              return
+            }
+            else if (food.size !== size) {
+              await dispatch({ type: "ADD", id: props.foodItem._id, name: props.foodItem.name, price: qty * parseInt(options[size]), qty: qty, size: size,img: props.ImgSrc })
+              console.log("Size different so simply ADD one more to the list")
+              return
+            }
+            return
+          }
+      
+        // console.log(data)
+        await dispatch({type:"ADD", id:props.foodItem._id, name:props.foodItem.name, price: qty * parseInt(options[size]), qty: qty, size: size})
     }
-    let finalPrice = qty * parseInt(options[size]);
+   
     useEffect (() => {
         setSize(priceRef.current.value)
     })
@@ -44,7 +65,7 @@ let dispatch = useDispatchCart();
                                 return <option key={data} value={data}>{data}</option>
                                })}
                             </select>
-                            <div className='d-inline h-100 fs-6'>₹{finalPrice}</div>
+                            <div className='d-inline h-100 fs-6'>₹{qty * parseInt(options[size])}</div>
                         
                         <hr></hr>
                     <button className={`btn btn-success justify-center ms-2`} onClick={handleAddToCart}>Add to Cart</button>

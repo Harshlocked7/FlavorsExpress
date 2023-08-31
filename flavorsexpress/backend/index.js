@@ -5,6 +5,7 @@ const bodyParser = require('body-parser')
 const mongoDB = require('./db')
 const userRoute = require('./routes/userRoute')
 const DisplayData = require('./routes/DisplayData')
+const OrderData = require('./routes/OrderData')
 const app = express()
 
 mongoDB();
@@ -33,3 +34,4 @@ app.listen(PORT, ()=> {
 
 app.use('/api/user', userRoute)
 app.use('/api', DisplayData)
+app.use('/api', OrderData)

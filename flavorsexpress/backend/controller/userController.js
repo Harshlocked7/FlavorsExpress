@@ -3,6 +3,7 @@ const router = express.Router(); // Use express.Router() to create a router
 const bcrypt = require("bcrypt");
 const generateToken = require("../utils/generateToken");
 const { User } = require("../models/User");
+const order = require('../models/Orders')
 const { validationResult } = require('express-validator');
 const jwt = require("jsonwebtoken");
 const jwtSecret =  "MyNameIsHarshIAmToG"
@@ -39,7 +40,7 @@ const signUp = async (req, res) => {
   }
 };
 
-module.exports = signUp;
+// module.exports = signUp;
 
 
 
@@ -75,7 +76,110 @@ const login = async (req, res) => {
   }
 };
 
+// const orderData =  async(req, res) => {
+  
+//  let data = req.body.order_data
+//   await data.splice(0, 0, {Order_data: req.body.order_data})
+//   let eID = await order.findOne({'email': req.body.email})
+//   console.log(eID)
+//   if (eID === null){
+//       try {
+//           await order.create({
+//               email: req.body.email,
+//               order_data: [data]
+//           }).then (() => {
+//               res.json({success: true})
+//           })
+//       } catch (error) {
+//           console.log(error.message)
+//           res.send("Server Error", error.message)
+//       }
+//   }
+//   else {
+//       try {
+//           await order.findOneAndUpdate({email: req.body.email},
+//               {$push: {order_data: data }}).then (() => {
+//                   res.json({success: true})
+//               })
+//       } catch (error) {
+//           res.send ("Server Error", error.message)
+//       }
+//   }
+// }
+
+// const orderData = async (req, res) => {
+//   let data = req.body.order_data;
+//   // data.unshift({
+//   //   Order_data: { /* ... */ }
+//   // });
+//   let eID = await order.findOne({ 'email': req.body.email });
+//   console.log(eID);
+//   if (eID === null) {
+//     try {
+//       await order.create({
+//         email: req.body.email,
+//         order_data: [data],
+//         order_date: req.body.order_date  // Store the order_date in the database
+//       }).then(() => {
+//         res.json({ success: true });
+//       });
+//     } catch (error) {
+//       console.log(error.message);
+//       res.status(500).send("Server Error: " + error.message);
+//     }
+//   } else {
+//     try {
+//       await order.findOneAndUpdate(
+//         { email: req.body.email },
+//         {
+//           $push: { order_data: data },
+//           $set: { order_date: req.body.order_date }  // Update the order_date
+//         }
+//       ).then(() => {
+//         res.json({ success: true });
+//       });
+//     } catch (error) {
+//       res.status(500).send("Server Error: " + error.message);
+//     }
+//   }
+// };
+
+const orderData = async (req, res) => {
+  try {
+    const data = [...req.body.order_data];  // Create a shallow copy of the array
+     data.unshift({
+  //   Order_data: { /* ... */ }
+  });
+
+    const userEmail = req.body.email;
+    const orderDate = new Date();  // Use the current date as the order_date
+
+    let existingOrder = await order.findOne({ 'email': userEmail });
+
+    if (existingOrder === null) {
+      await order.create({
+        email: userEmail,
+        order_data: data,
+        order_date: orderDate
+      });
+    } else {
+      await order.findOneAndUpdate(
+        { email: userEmail },
+        {
+          $push: { order_data: data },
+          $set: { order_date: orderDate }
+        }
+      );
+    }
+
+    res.json({ success: true });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Server Error: " + error.message);
+  }
+};
 
 
 
-module.exports = { signUp, login };
+// module.exports = orderData;
+module.exports = { signUp, login, orderData };
