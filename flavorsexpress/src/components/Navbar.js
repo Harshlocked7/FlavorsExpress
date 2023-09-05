@@ -30,10 +30,10 @@ export default function Navbar() {
         <ul className="navbar-nav me-auto mb-2">
           <li className="nav-item">
             <Link className="nav-link active fs-5" aria-current="page" to="/">Home</Link>
-          </li>
+          </li> 
           {(localStorage.getItem("authToken"))? 
         <li className="nav-item">
-        <Link className="nav-link active fs-5" aria-current="page" to="/">My Orders</Link>
+        <Link className="nav-link active fs-5" aria-current="page" to="/myOrder">My Orders</Link>
       </li>
         : ""}
         </ul>
